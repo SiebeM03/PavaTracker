@@ -37,7 +37,6 @@ class API
         $res = curl_exec($ch);
         $data = json_decode($res, true);
 
-
         // TODO create switch for all status codes and throw different ApiExceptions
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

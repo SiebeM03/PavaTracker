@@ -13,11 +13,15 @@ class Overview extends Component
     public $updatingData;
     public $clan;
 
-    public function updateData()
+    public function updateClanData()
     {
         try {
-            $clanTag = SelectedPlayerClanService::first()->clan->tag;
-            $this->clan = ClanAPI::saveClanInfo($clanTag);
+            if (!$this->clan) {
+                $this->clan = ClanAPI::saveClanInfo("#2PJJL82YR");
+                SelectedPlayerClanService::first()->update(['clan_id' => $this->clan->id]);
+            } else {
+                $this->clan = ClanAPI::saveClanInfo(SelectedPlayerClanService::first()->clan->tag);
+            }
         } catch (ApiException $exception) {
             dd('error: ' . $exception->getReason());
         }
@@ -32,9 +36,11 @@ class Overview extends Component
     {
         $this->clan = SelectedPlayerClanService::first()->clan;
         if (!$this->clan) {
+            //dd($this->clan);
             $this->clan = ClanAPI::saveClanInfo('#2PJJL82YR');
-            app(Members::class)->updateData();
             SelectedPlayerClanService::first()->update(['clan_id' => $this->clan->id]);
+            $this->updateClanData();
+            app(Members::class)->updateMembersData();
         }
     }
 

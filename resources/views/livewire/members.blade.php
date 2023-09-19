@@ -1,14 +1,14 @@
 @if($visibleOnOverview)
-    <x-pt.section wire:init="updateData">Filter</x-pt.section>
+    <x-pt.section wire:init="updateMembersData">Filter</x-pt.section>
 @endif
 
-<x-pt.section class="mt-4 p-0 relative overflow-auto bg-transparent" wire:init="updateData">
+<x-pt.section class="mt-4 p-0 relative overflow-auto bg-transparent" wire:init="updateMembersData">
     {{-- TODO fix preloader constantly showing --}}
     <div class="mb-0 mt-0 -px-4 flex-grow">
         <table class="w-full text-sm text-left text-card-gray-400 table-fixed">
             <thead class="text-xs text-accent uppercase bg-table-header sticky top-0 z-20">
-            <tr class=""> {{--[&>th]:border-t-2 odd:[&>th]:border-red-500 even:[&>th]:border-white --}}
-                <th scope="col" class="px-6 py-3 sticky top-0 left-0 z-20 bg-table-header">
+            <tr class="[&>th]:border-t-2 odd:[&>th]:border-red-500 even:[&>th]:border-white"> {{--[&>th]:border-t-2 odd:[&>th]:border-red-500 even:[&>th]:border-white --}}
+                <th scope="col" class="px-6 py-3 sticky top-0 left-0 z-20 bg-table-header min-w-0 md:w-1/3 lg:1/4">
                     Name
                 </th>
                 <th scope="col" class="w-16 text-center">
@@ -17,13 +17,13 @@
                 <th scope="col" class="px-6 py-3">
                     Donations/received
                 </th>
-                <th scope="col" class="px-3 py-3 w-32">
+                <th scope="col" class="px-3 py-3">
                     Trophies
                 </th>
-                <th scope="col" class="px-3 py-3 w-32">
+                <th scope="col" class="px-3 py-3">
                     Trophies
                 </th>
-                <th scope="col" class="px-6 py-3 w-32">
+                <th scope="col" class="px-6 py-3">
                     Action
                 </th>
             </tr>
@@ -39,7 +39,7 @@
                 @foreach($clan->players as $member)
                     <tr class="odd:bg-table-odd even:bg-table-even border-b border-table-border">
                         <th scope="row"
-                                class="px-6 py-4 font-medium whitespace-nowrap text-card-title hover:cursor-pointer sticky left-0 z-10 bg-inherit flex"
+                                class="px-6 py-4 font-medium whitespace-nowrap text-card-title hover:cursor-pointer sticky left-0 z-10 bg-inherit flex md:w-1/3 lg:1/4"
                                 onclick="copyTag('{{ $member->tag }}')">
                             <div class="">
                                 {{ $member->name }}

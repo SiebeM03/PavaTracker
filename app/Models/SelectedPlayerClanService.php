@@ -29,11 +29,11 @@ class SelectedPlayerClanService extends Model
      * set: transform the attribute before it is sent to database
      */
     public function player() {
-        return $this->belongsTo(Player::class)->withDefault();
+        return $this->belongsTo(Player::class);
 
     }
     public function clan() {
-        return $this->belongsTo(Clan::class)->withDefault();
+        return $this->belongsTo(Clan::class);
 
     }
 

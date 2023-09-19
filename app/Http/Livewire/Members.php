@@ -25,10 +25,9 @@ class Members extends Component
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
-    public function updateData()
+    public function updateMembersData()
     {
         try {
-            //ClanAPI::saveClanInfo(SelectedPlayerClanService::first()->clan->tag);
             PlayerAPI::saveClanMembersInfo(SelectedPlayerClanService::first()->clan);
             return true;
         } catch (ApiException $exception) {
@@ -45,7 +44,7 @@ class Members extends Component
     {
         $this->clan = SelectedPlayerClanService::first()->clan;
         if (!$this->clan) {
-            $this->updateData();
+            $this->updateMembersData();
         }
         $this->visibleOnOverview = $visibleOnOverview;
     }
@@ -65,5 +64,3 @@ class Members extends Component
             ->layout('layouts.pava-tracker');
     }
 }
-
-
