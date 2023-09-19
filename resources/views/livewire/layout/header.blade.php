@@ -1,31 +1,45 @@
 @php use App\Helpers\PlayerAPI; @endphp
-<header class="bg-side sm:bg-main sm:border-none border-b-2 border-cyan-300">
-    <div class="mx-6 pt-4 mx-auto p-4 max-w-screen-xl flex flex-wrap items-center justify-between">
-        <div class="text-accent text-xs text-center cursor-pointer ">
+<header class="bg-side sm:bg-main sm:border-none border-b-2 border-cyan-300 sm:pr-8">
+    <div class="max-sm:mr-4 py-4 max-w-screen-xl flex flex-nowrap items-center sm:justify-end">
+        <div class="text-accent text-xs text-center cursor-pointer sm:mr-auto">
             <span class="sm:hidden">&lt; 640</span> <span class="hidden sm:block md:hidden">SM | 640 - 768</span> <span
                     class="hidden md:block lg:hidden">MD | 768 - 1024</span> <span class="hidden lg:block xl:hidden">LG | 1024 - 1280</span>
             <span class="hidden xl:block 2xl:hidden">XL | 1280 - 1536</span> <span class="hidden 2xl:block">2XL |  &gt; 1536</span>
         </div>
         
         <!-- Title for mobile -->
-        <a class="flex items-center sm:hidden">
+        <a class="flex items-center sm:hidden mr-auto">
             <span class="no-underline decoration-cyan-300 hover:underline hover:cursor-pointer self-center text-3xl font-bold font-semibold whitespace-nowrap text-white">
                 Pava Tracker
             </span> </a>
         
         
         @guest()
-            <x-layout.header.nav-link href="{{ route('login') }}" :active="request()->routeIs('login')"
-                    class="ml-auto mr-5">
-                Login
-            </x-layout.header.nav-link>
-            <x-layout.header.nav-link href="{{ route('register') }}" :active="request()->routeIs('register')">
-                Register
-            </x-layout.header.nav-link>
+            <div class="flex flex-wrap justify-end gap-x-2">
+                <x-layout.header.nav-link href="{{ route('login') }}" :active="request()->routeIs('login')">
+                    Login
+                </x-layout.header.nav-link>
+                <x-layout.header.nav-link href="{{ route('register') }}" :active="request()->routeIs('register')">
+                    Register
+                </x-layout.header.nav-link>
+            </div>
         @endguest
         
         @auth
-            <x-pt.dropdown name="playerDropdown" text="{{ $activePlayer->name ?? 'No players selected' }}">
+            <x-pt.dropdown name="playerDropdown">
+                <x-slot name="text">
+                    <div class="w-full sm:px-5 h-9 text-center inline-flex items-center place-content-between">
+                        <span class="hidden sm:block whitespace-nowrap overflow-x-hidden text-ellipsis">{{ $activePlayer->name ?? 'No players selected' }}</span>
+                        
+                        <svg :class="{'-rotate-180': playerDropdown_open }" class="w-3 h-3 mx-auto sm:mr-1"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m1 1 4 4 4-4"/>
+                        </svg>
+                    </div>
+                </x-slot>
+                
                 @foreach($clans as $clan)
                     <ul class="py-2">
                         <div class="flex text-card-title font-bold mx-3 mb-1 pb-1 border-b-2 border-card-title-border">
@@ -36,7 +50,7 @@
                             <li wire:key="player_{{ $player }}"
                                     wire:click="setActivePlayer({{ $player->id }})"
                                     class="{{ $activePlayer == $player ? 'font-bold border-l-4 border-accent' : '' }} hover:cursor-pointer">
-                                <a class=" flex px-4 py-2 hover:bg-card-title-border focus:outline-none [&>span]:focus:border-accent">
+                                <a class="flex px-4 py-2 hover:bg-card-title-border focus:outline-none [&>span]:focus:border-accent">
                                     <img src="{{ asset('/storage/th_icons/th' . $player->getTownHallLevel()[0] . '.png') }}"
                                             alt="Town Hall {{ $player->getTownHallLevel()[0] }}"
                                             class="h-6 {{ $activePlayer == $player ? '' : 'ml-1' }}">
@@ -62,45 +76,32 @@
                 </ul>
             </x-pt.dropdown>
             
-            <!-- User button & dropdown -->
-            <div class="flex items-center md:order-2">
-                <button type="button" class="btn-default flex mr-3 text-sm rounded-full md:mr-0 w-10 h-10"
-                        id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
-                        data-dropdown-placement="bottom">
-                    <svg class="w-10 h-10 p-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+            
+            <x-pt.dropdown name="userDropdown" width="9" align="right">
+                <x-slot name="text">
+                    <svg class="w-9 h-9 p-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 14 18">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M7 8a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-2 3h4a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z"/>
                     </svg>
-                </button>
-                <!-- Dropdown menu -->
-                <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
-                        id="user-dropdown">
-                    <div class="px-4 py-3">
-                        <span class="block text-sm text-gray-900 dark:text-white">Bonnie Green</span> <span
-                                class="block text-sm  text-gray-500 truncate dark:text-gray-400">name@flowbite.com</span>
-                    </div>
-                    <ul class="py-2" aria-labelledby="user-menu-button">
-                        <li>
-                            <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign
-                                out</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+                </x-slot>
+                
+                <ul class="gap-y-2">
+                    <li>
+                        <a href="{{ route('profile.show') }}"
+                                class="w-full flex px-4 py-2 hover:bg-card-title-border focus:outline-none">
+                            {{ __('Profile') }}
+                        </a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit"
+                                    class=" w-full flex px-4 py-2 hover:bg-card-title-border focus:outline-none">
+                                {{ __('Log Out') }}
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </x-pt.dropdown>
             
             
             <x-pt.dialog-modal wire:model="showNewPlayerModal" maxWidth="lg">
