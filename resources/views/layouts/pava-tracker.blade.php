@@ -19,7 +19,7 @@
     @livewire('layout.header')
     
     <!-- Main content -->
-    <main class="mt-6 mx-8 mb-8 flex flex-col flex-grow overflow-hidden">
+    <main class="mt-6 sm:mt-2 mx-2 sm:mx-8 mb-8 flex flex-col flex-grow overflow-hidden">
         {{ $slot }}
     </main>
 </div>
