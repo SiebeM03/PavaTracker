@@ -13,3 +13,9 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+# Laravel 4 specific
+bootstrap/compiled.php
+app/storage/
+/.vagrant
+
+/_notes/
