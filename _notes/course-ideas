@@ -1,0 +1,14 @@
+Layout component
+- sidebar component
+- topbar component
+Reusable components
+- cards (make table into card too)
+- alerts
+Refactor the layout component
+- dropdown for user/account
+Database migrations
+- database integration in phpstorm
+Shop: master section
+- custom pagination
+
+
