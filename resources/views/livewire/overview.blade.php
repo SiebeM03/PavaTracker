@@ -1,5 +1,5 @@
 @php use App\Helpers\PlayerAPI; @endphp
-<div class="sm:flex flex-row gap-2 lg:gap-4" wire:init="updateData">
+<div class="sm:flex flex-row gap-2 lg:gap-4" wire:init="updateClanData">
     <!-- Members & CWL & raid card -->
     <div class="sm:basis-2/3">
         <!-- Members card -->
