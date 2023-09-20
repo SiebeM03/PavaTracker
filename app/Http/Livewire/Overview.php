@@ -28,13 +28,9 @@ class Overview extends Component
         }
     }
 
-    public function showNewClan()
-    {
-        $this->clan = SelectedPlayerClanService::first()->clan;
-    }
-
     public function mount()
     {
+        $this->updateClanData();
         //app(Members::class)->updateMembersData();
     }
 
