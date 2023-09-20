@@ -1,5 +1,5 @@
 @if($visibleOnOverview)
-    <x-pt.section wire:init="updateMembersData">Filter</x-pt.section>
+    <x-pt.section>Filter</x-pt.section>
 @endif
 
 <x-pt.section class="mt-4 p-0 relative overflow-auto bg-transparent" wire:init="updateMembersData">

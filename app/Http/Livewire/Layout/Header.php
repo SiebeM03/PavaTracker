@@ -63,12 +63,9 @@ class Header extends Component
     public function setActivePlayer($player)
     {
         $selectedPlayer = SelectedPlayerClanService::first();
-        $selectedClan = $selectedPlayer->clan_id;
         $selectedPlayer->update(['player_id' => $player, 'clan_id' => Player::whereId($player)->first()->clan_id]);
+
         $this->activePlayer = $selectedPlayer->player;
-        if ($selectedClan == $selectedPlayer->clan_id) {
-            app(Overview::class)->showNewClan();
-        }
         return redirect()->route('overview');
     }
 
@@ -82,7 +79,6 @@ class Header extends Component
                 $currentPlayers[] = $currentPlayer->id;
                 $clans[] = $currentPlayer->clan_id;
             }
-
             // Get clans corresponding to currentPlayers
             if (count($currentPlayers) !== 0) {
                 $clans = Clan::with(
@@ -94,6 +90,16 @@ class Header extends Component
                     $this->setActivePlayer($currentPlayers[0]);
                 }
             }
+            if (SelectedPlayerClanService::first()->player == null) {
+                $firstPlayer = Player::where('user_id', '=', auth()->user()->id)->first();
+                if ($firstPlayer !== null) {
+                    SelectedPlayerClanService::first()->update(['player_id' => $firstPlayer->id]);
+                } else {
+                    SelectedPlayerClanService::first()->update(['player_id' => null]);
+                }
+            }
+        } else {
+            SelectedPlayerClanService::first()->update(['player_id' => null]);
         }
         $this->activePlayer = SelectedPlayerClanService::first()->player;
         return view('livewire.layout.header', compact('clans'));

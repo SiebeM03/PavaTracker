@@ -48,16 +48,16 @@ class PlayerAPI extends API
         foreach ($databaseMembers as $databaseMember) {
             // if $databaseMember is not in $currentMemberTags the must have left the clan -> update their clan_id
             if (!in_array($databaseMember->tag, $currentMemberTags)) {
+                $player = self::savePlayerInfo($databaseMember->tag);
                 $databaseMember->update([
-                    'clan_id' => ((PlayerAPI::getPlayerClan($databaseMember))->id ?? null),
+                    'clan_id' => ($player->clan_id ?? null),
                 ]);
             }
-            self::savePlayerInfo($databaseMember->tag);
         }
 
         // Update all clan members found with API
         foreach ($data["items"] as $member) {
-            $player = Player::updateOrCreate(
+            Player::updateOrCreate(
                 [
                     'tag' => $member['tag'],
                 ],
