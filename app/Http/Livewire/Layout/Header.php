@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Layout;
 
 use App\Exceptions\ApiException;
 use App\Helpers\PlayerAPI;
-use App\Http\Livewire\Overview;
 use App\Models\Clan;
 use App\Models\Player;
 use App\Models\SelectedPlayerClanService;
@@ -50,23 +49,28 @@ class Header extends Component
             }
             /* TODO add more custom errors*/
             if ($status == 'ok') {
-                PlayerAPI::updateUserId($this->newPlayer['playerTag'], auth()->user()->id);
+                $player = PlayerAPI::updateUserId($this->newPlayer['playerTag'], auth()->user()->id);
+                $this->setActivePlayer($player->id);
                 $this->showNewPlayerModal = false;
             } else {
                 $this->addError('invalid', "Invalid combination, try again!");
             }
         } catch (ApiException $exception) {
-
+            dd($exception);
         }
     }
 
-    public function setActivePlayer($player)
+    public function setActivePlayer($player, $clan = null)
     {
-        $selectedPlayer = SelectedPlayerClanService::first();
-        $selectedPlayer->update(['player_id' => $player, 'clan_id' => Player::whereId($player)->first()->clan_id]);
+        // Don't reload when selecting currently selected user
+        if ($this->activePlayer !== null && $this->activePlayer->id !== $player) {
+            $selectedPlayer = SelectedPlayerClanService::first();
+            $selectedPlayer->update(['player_id' => $player, 'clan_id' => Player::whereId($player)->first()->clan_id]);
 
-        $this->activePlayer = $selectedPlayer->player;
-        return redirect()->route('overview');
+            $this->activePlayer = $selectedPlayer->player;
+            return redirect()->route('overview');
+        }
+        return $this->activePlayer;
     }
 
     public function render()
@@ -75,32 +79,29 @@ class Header extends Component
         $currentPlayers = [];
 
         if (auth()->user()) {
-            foreach (auth()->user()->players as $currentPlayer) {
-                $currentPlayers[] = $currentPlayer->id;
-                $clans[] = $currentPlayer->clan_id;
+            foreach (auth()->user()->players as $linkedPlayer) {
+                $currentPlayers[] = $linkedPlayer->id;
+                $clans[] = $linkedPlayer->clan_id;
             }
-            // Get clans corresponding to currentPlayers
+
+            // Get clans corresponding to currentPlayers[]
             if (count($currentPlayers) !== 0) {
                 $clans = Clan::with(
                     ['players' => function ($query) use ($currentPlayers) {
                         $query->whereIn('id', $currentPlayers);
                     }]
                 )->whereIn('id', $clans)->get();
+
                 if (SelectedPlayerClanService::first() == null) {
                     $this->setActivePlayer($currentPlayers[0]);
                 }
-            }
-            if (SelectedPlayerClanService::first()->player == null) {
-                $firstPlayer = Player::where('user_id', '=', auth()->user()->id)->first();
-                if ($firstPlayer !== null) {
-                    SelectedPlayerClanService::first()->update(['player_id' => $firstPlayer->id]);
-                } else {
-                    SelectedPlayerClanService::first()->update(['player_id' => null]);
-                }
+            } else {
+                $this->setActivePlayer(null, Clan::where('tag', '=', '#2PJJL82YR')->first()->id);
             }
         } else {
-            SelectedPlayerClanService::first()->update(['player_id' => null]);
+            $this->setActivePlayer(null, Clan::where('tag', '=', '#2PJJL82YR')->first()->id);
         }
+
         $this->activePlayer = SelectedPlayerClanService::first()->player;
         return view('livewire.layout.header', compact('clans'));
     }
