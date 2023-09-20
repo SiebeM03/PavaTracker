@@ -76,6 +76,11 @@ class PlayerAPI extends API
         return $data;
     }
 
+    /**
+     * @param string $playerTag
+     * @return Player
+     * @throws ApiException
+     */
     public static function savePlayerInfo(string $playerTag): Player
     {
         $url = 'https://api.clashofclans.com/v1/players/' . urlencode($playerTag);
@@ -110,10 +115,16 @@ class PlayerAPI extends API
         return $data['status'];
     }
 
+    /**
+     * @param $tag
+     * @param $userId
+     * @return Player
+     */
     public static function updateUserId($tag, $userId)
     {
         $player = self::savePlayerInfo($tag);
         $player->update(['user_id' => $userId]);
+        return $player;
     }
 
 }
