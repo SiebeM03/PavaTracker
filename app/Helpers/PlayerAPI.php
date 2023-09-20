@@ -106,6 +106,7 @@ class PlayerAPI extends API
      * @param string $playerTag
      * @param string $apiToken
      * @return string
+     * @throws ApiException
      */
     public static function validateApiToken(string $playerTag, string $apiToken): string
     {
@@ -119,8 +120,9 @@ class PlayerAPI extends API
      * @param $tag
      * @param $userId
      * @return Player
+     * @throws ApiException
      */
-    public static function updateUserId($tag, $userId)
+    public static function updateUserId($tag, $userId): Player
     {
         $player = self::savePlayerInfo($tag);
         $player->update(['user_id' => $userId]);

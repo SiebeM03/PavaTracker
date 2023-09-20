@@ -16,7 +16,10 @@ class ClanAPI extends API
     {
         $foundClan = Clan::where('tag', $clanTag)->first();
         if (!isset($foundClan)) {
-            $foundClan = self::saveClanInfo($clanTag);
+            try {
+                $foundClan = self::saveClanInfo($clanTag);
+            } catch (ApiException $e) {
+            }
         }
         return $foundClan;
     }
@@ -43,9 +46,10 @@ class ClanAPI extends API
                 'type' => $data["type"],
                 'public_war_log' => $data["isWarLogPublic"],
                 'war_wins' => $data["warWins"],
-                'war_ties' => ( $data["warTies"] ?? null),
+                'war_ties' => ($data["warTies"] ?? null),
                 'war_losses' => ($data["warLosses"] ?? null),
                 'war_win_streak' => $data["warWinStreak"],
             ]);
     }
+
 }

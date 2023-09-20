@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Layout;
 
 use App\Exceptions\ApiException;
+use App\Helpers\ClanAPI;
 use App\Helpers\PlayerAPI;
 use App\Models\Clan;
 use App\Models\Player;
@@ -96,10 +97,12 @@ class Header extends Component
                     $this->setActivePlayer($currentPlayers[0]);
                 }
             } else {
-                $this->setActivePlayer(null, Clan::where('tag', '=', '#2PJJL82YR')->first()->id);
+                $pavax = ClanAPI::getClanByTag('#2PJJL82YR');
+                $this->setActivePlayer(null, $pavax->id);
             }
         } else {
-            $this->setActivePlayer(null, Clan::where('tag', '=', '#2PJJL82YR')->first()->id);
+            $pavax = ClanAPI::getClanByTag('#2PJJL82YR');
+            $this->setActivePlayer(null, $pavax->id);
         }
 
         $this->activePlayer = SelectedPlayerClanService::first()->player;

@@ -21,16 +21,15 @@ class Members extends Component
         'type' => null,
     ];
 
-    protected $listeners = ['refreshComponent' => '$refresh'];
-
     public function updateMembersData()
     {
-        $this->clan = SelectedPlayerClanService::first()->clan;
         try {
+            $this->clan = SelectedPlayerClanService::first()->clan;
             if ($this->clan == null) {
                 // Create and select PAVA X as default
                 $clan = ClanAPI::saveClanInfo("#2PJJL82YR");
                 SelectedPlayerClanService::first()->update(['clan_id' => $clan->id]);
+                $this->clan = $clan;
             }
             PlayerAPI::saveClanMembersInfo(SelectedPlayerClanService::first()->clan);
         } catch (ApiException $exception) {
@@ -40,6 +39,14 @@ class Members extends Component
                 'type' => ($exception->getType() ?? null),
             ];
             return false;
+        }
+    }
+
+    public function getPlayersData()
+    {
+        $clanMembers = SelectedPlayerClanService::first()->clan->players;
+        foreach ($clanMembers as $player) {
+            PlayerAPI::savePlayerInfo($player->tag);
         }
     }
 
