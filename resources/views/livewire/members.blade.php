@@ -5,6 +5,7 @@
 <x-pt.section class="mt-4 p-0 relative overflow-auto bg-transparent" wire:init="updateMembersData">
     {{-- TODO fix preloader constantly showing --}}
     <div class="mb-0 mt-0 -px-4 flex-grow">
+        <button wire:click="getPlayersData">Retrieve TH</button>
         <table class="w-full text-sm text-left text-card-gray-400 table-fixed">
             <thead class="text-xs text-accent uppercase bg-table-header sticky top-0 z-20">
             <tr class="[&>th]:border-t-2 odd:[&>th]:border-red-500 even:[&>th]:border-white"> {{--[&>th]:border-t-2 odd:[&>th]:border-red-500 even:[&>th]:border-white --}}
