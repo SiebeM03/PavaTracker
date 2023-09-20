@@ -5,8 +5,6 @@ namespace App\Http\Livewire;
 use App\Exceptions\ApiException;
 use App\Helpers\ClanAPI;
 use App\Helpers\PlayerAPI;
-use App\Models\Clan;
-use App\Models\Player;
 use App\Models\SelectedPlayerClanService;
 use Livewire\Component;
 
@@ -27,9 +25,14 @@ class Members extends Component
 
     public function updateMembersData()
     {
+        $this->clan = SelectedPlayerClanService::first()->clan;
         try {
+            if ($this->clan == null) {
+                // Create and select PAVA X as default
+                $clan = ClanAPI::saveClanInfo("#2PJJL82YR");
+                SelectedPlayerClanService::first()->update(['clan_id' => $clan->id]);
+            }
             PlayerAPI::saveClanMembersInfo(SelectedPlayerClanService::first()->clan);
-            return true;
         } catch (ApiException $exception) {
             $this->error = [
                 'reason' => $exception->getReason(),
@@ -42,11 +45,10 @@ class Members extends Component
 
     public function mount($visibleOnOverview = true)
     {
-        $this->clan = SelectedPlayerClanService::first()->clan;
-        if (!$this->clan) {
+        $this->visibleOnOverview = $visibleOnOverview;
+        if ($this->visibleOnOverview) {
             $this->updateMembersData();
         }
-        $this->visibleOnOverview = $visibleOnOverview;
     }
 
     public function render()

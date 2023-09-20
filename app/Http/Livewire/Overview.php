@@ -15,6 +15,7 @@ class Overview extends Component
 
     public function updateClanData()
     {
+        $this->clan = SelectedPlayerClanService::first()->clan;
         try {
             if (!$this->clan) {
                 $this->clan = ClanAPI::saveClanInfo("#2PJJL82YR");
@@ -34,20 +35,11 @@ class Overview extends Component
 
     public function mount()
     {
-        $this->clan = SelectedPlayerClanService::first()->clan;
-        if (!$this->clan) {
-            //dd($this->clan);
-            $this->clan = ClanAPI::saveClanInfo('#2PJJL82YR');
-            SelectedPlayerClanService::first()->update(['clan_id' => $this->clan->id]);
-            $this->updateClanData();
-            app(Members::class)->updateMembersData();
-        }
+        //app(Members::class)->updateMembersData();
     }
 
     public function render()
     {
-        // TODO filter on clan
-        //$this->clan = SelectedPlayerClanService::first()->clan;
         $this->clan = SelectedPlayerClanService::first()->clan;
 
         return view('livewire.overview')
