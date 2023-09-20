@@ -27,5 +27,4 @@
 @stack('script')
 @livewireScripts
 </body>
-
 </html>
