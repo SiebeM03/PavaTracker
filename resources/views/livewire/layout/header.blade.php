@@ -26,7 +26,7 @@
         @endguest
         
         @auth
-            <x-pt.dropdown name="playerDropdown">
+            <x-pt.dropdown name="playerDropdown" width="44">
                 <x-slot name="text">
                     <div class="w-full sm:px-5 h-9 text-center inline-flex items-center place-content-between">
                         <span class="hidden sm:block whitespace-nowrap overflow-x-hidden text-ellipsis">{{ $activePlayer->name ?? 'No players selected' }}</span>

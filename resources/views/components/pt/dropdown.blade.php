@@ -19,6 +19,7 @@
         case 'right':
             $alignmentClasses = 'fixed origin-top-right right-8 mt-1 top-14';
             break;
+        case 'bottom':
         default:
             $alignmentClasses = 'fixed origin-bottom mt-1 top-14';
             break;
@@ -26,7 +27,7 @@
 @endphp
 
 <div class="ml-5 flex justify-center" x-data="{ {{ $name }}: false }">
-    <button class="btn-default w-9 sm:w-{{ $width }} h-9 font-medium rounded-full sm:rounded-full text-sm overflow-hidden"
+    <button class="btn-default max-sm:w-9 w-{{ $width }} h-9 font-medium rounded-full sm:rounded-full text-sm overflow-hidden"
             @click="{{ $name }} = !{{ $name }}" @click.outside="{{ $name }} = false"
             @keydown.escape="{{ $name }} = false">
         {{ $text }}
@@ -34,7 +35,7 @@
     
     <!-- Users dropdown menu -->
     <div
-            x-show="{{ $name}}"
+            x-show="{{ $name }}"
             x-cloak
             {{ $attributes->merge(['class' => "z-50 text-sm text-card-gray-200 bg-card-border border-2 border-card-title-border rounded-lg w-44 " .  $alignmentClasses ]) }}>
         {{ $slot }}
