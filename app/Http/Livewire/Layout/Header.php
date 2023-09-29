@@ -78,6 +78,7 @@ class Header extends Component
     {
         $clans = [];
         $currentPlayers = [];
+        $playersWithNoClan = [];
 
         if (auth()->user()) {
             foreach (auth()->user()->players as $linkedPlayer) {
@@ -92,9 +93,10 @@ class Header extends Component
                         $query->whereIn('id', $currentPlayers);
                     }]
                 )->whereIn('id', $clans)->get();
+                $playersWithNoClan = Player::whereIn('id', $currentPlayers)->where('clan_id', '=', null)->get();
 
                 if (SelectedPlayerClanService::first()->player_id == null) {
-                    $this->setActivePlayer($currentPlayers[0]);
+                    $this->setActivePlayer($currentPlayers[0]->id);
                 }
             } else {
                 $pavax = ClanAPI::getClanByTag('#2PJJL82YR');
@@ -106,6 +108,6 @@ class Header extends Component
         }
 
         $this->activePlayer = SelectedPlayerClanService::first()->player;
-        return view('livewire.layout.header', compact('clans'));
+        return view('livewire.layout.header', compact('clans', 'playersWithNoClan'));
     }
 }

@@ -47,7 +47,7 @@
                             <p class="leading-8 truncate justify-self-center">{{ $clan->name }}</p>
                         </div>
                         @foreach($clan->players as $player)
-                            <li wire:key="player_{{ $player }}"
+                            <li wire:key="player_{{ $player->id }}"
                                     wire:click="setActivePlayer({{ $player->id }})"
                                     class="{{ $activePlayer == $player ? 'font-bold border-l-4 border-accent' : '' }} hover:cursor-pointer">
                                 <a class="flex px-4 py-2 hover:bg-card-title-border focus:outline-none [&>span]:focus:border-accent">
@@ -60,6 +60,25 @@
                         @endforeach
                     </ul>
                 @endforeach
+                @if(count($playersWithNoClan) !== 0)
+                    <ul>
+                        <div class="flex text-card-title font-bold mx-3 mb-1 pb-1 border-b-2 border-card-title-border">
+                            <p class="leading-8 truncate justify-self-center mx-auto">NO CLAN</p>
+                        </div>
+                        @foreach($playersWithNoClan as $linkedPlayer)
+                            <li wire:key="player_{{ $linkedPlayer->id }}"
+                                    wire:click="setActivePlayer({{ $linkedPlayer->id }})"
+                                    class="{{ $activePlayer == $linkedPlayer ? 'font-bold border-l-4 border-accent' : '' }} hover:cursor-pointer">
+                                <a class="flex px-4 py-2 hover:bg-card-title-border focus:outline-none [&>span]:focus:border-accent">
+                                    <img src="{{ asset('/storage/th_icons/th' . $linkedPlayer->getTownHallLevel()[0] . '.png') }}"
+                                            alt="Town Hall {{ $player->getTownHallLevel()[0] }}"
+                                            class="h-6 {{ $activePlayer == $linkedPlayer ? '' : 'ml-1' }}">
+                                    <p class="ml-2 leading-6 truncate">{{ $linkedPlayer->name }}</p>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
                 
                 <ul class="border-card-title-border {{ isset($clans) ? '' : 'border-t-2 ' }}">
                     <li wire:click="setNewPlayer()">
