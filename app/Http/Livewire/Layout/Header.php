@@ -61,14 +61,14 @@ class Header extends Component
         }
     }
 
-    public function setActivePlayer($player, $clan = null)
+    public function setActivePlayer($playerId, $clan = null)
     {
-        // Don't reload when selecting currently selected user
-        if ($this->activePlayer !== null && $this->activePlayer->id !== $player) {
-            $selectedPlayer = SelectedPlayerClanService::first();
-            $selectedPlayer->update(['player_id' => $player, 'clan_id' => Player::whereId($player)->first()->clan_id]);
+        $previousActivePlayer = $this->activePlayer;
+        $selectedPlayer = SelectedPlayerClanService::first();
+        $selectedPlayer->update(['player_id' => $playerId, 'clan_id' => Player::whereId($playerId)->first()->clan_id]);
 
-            $this->activePlayer = $selectedPlayer->player;
+        $this->activePlayer = $selectedPlayer->player;
+        if ($previousActivePlayer->id !== $playerId && $previousActivePlayer->clan_id !== $selectedPlayer->clan_id) {
             return redirect()->route('overview');
         }
         return $this->activePlayer;
@@ -93,7 +93,7 @@ class Header extends Component
                     }]
                 )->whereIn('id', $clans)->get();
 
-                if (SelectedPlayerClanService::first() == null) {
+                if (SelectedPlayerClanService::first()->player_id == null) {
                     $this->setActivePlayer($currentPlayers[0]);
                 }
             } else {
