@@ -65,13 +65,20 @@ class Header extends Component
     {
         $previousActivePlayer = $this->activePlayer;
         $selectedPlayer = SelectedPlayerClanService::first();
-        $selectedPlayer->update(['player_id' => $playerId, 'clan_id' => Player::whereId($playerId)->first()->clan_id]);
+        $selectedPlayer->update(['player_id' => $playerId]);
+        $this->setActiveClan($selectedPlayer->clan_id);
 
         $this->activePlayer = $selectedPlayer->player;
         if ($previousActivePlayer->id !== $playerId && $previousActivePlayer->clan_id !== $selectedPlayer->clan_id) {
             return redirect()->route('overview');
         }
         return $this->activePlayer;
+    }
+
+    public function setActiveClan($clanId)
+    {
+        $selectedPlayer = SelectedPlayerClanService::first();
+        $selectedPlayer->update(['clan_id' => $clanId]);
     }
 
     public function render()
@@ -100,11 +107,11 @@ class Header extends Component
                 }
             } else {
                 $pavax = ClanAPI::getClanByTag('#2PJJL82YR');
-                $this->setActivePlayer(null, $pavax->id);
+                $this->setActiveClan($pavax->id);
             }
         } else {
             $pavax = ClanAPI::getClanByTag('#2PJJL82YR');
-            $this->setActivePlayer(null, $pavax->id);
+            $this->setActiveClan($pavax->id);
         }
 
         $this->activePlayer = SelectedPlayerClanService::first()->player;
