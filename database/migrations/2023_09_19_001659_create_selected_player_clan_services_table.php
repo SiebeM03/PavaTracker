@@ -23,7 +23,7 @@ return new class extends Migration {
             [
                 [
                     'player_id' => null,
-                    'clan_id' => null,
+                    'clan_id' => 1,
                 ]
             ]
         );

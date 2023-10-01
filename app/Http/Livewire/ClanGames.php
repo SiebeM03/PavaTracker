@@ -9,28 +9,33 @@ use Livewire\Component;
 
 class ClanGames extends Component
 {
-    public $firstClanGame;
-    public $lastClanGame;
+    public $showingOverview;
+    public $totalPointsLastClanGame;
 
-    public function getClanGamePerformance($player, $clanGameNumber) {
+    public function getClanGamePerformance($player, $clanGameNumber)
+    {
         $clanGamePerformance = ClanGame::where([
             ['player_id', $player->id],
             ['clanGameNumber', $clanGameNumber]
         ])->first();
         $previousClanGamePerformance = ClanGame::where([
             ['player_id', $player->id],
-            ['clanGameNumber', $clanGameNumber-1]
+            ['clanGameNumber', $clanGameNumber - 1]
         ])->first();
 
         if ($previousClanGamePerformance == null) {
-            return 0;
+            return null;
         } elseif ($clanGamePerformance == null) {
             return 0;
         } else {
+            //return $clanGamePerformance->totalPoints;
             return $clanGamePerformance->totalPoints - $previousClanGamePerformance->totalPoints;
         }
+    }
 
-        return $clanGamePerformance->totalPoints ?? '';
+    public function mount($showingOverview = false)
+    {
+        $this->showingOverview = $showingOverview;
     }
 
     public function render()
@@ -41,15 +46,23 @@ class ClanGames extends Component
             ->with('clanGames')
             ->get();
 
-        $this->firstClanGame = ClanGame::where('clan_id', $selectedClanId)
-            ->orderBy('clanGameNumber')
+        $firstClanGame = ClanGame::where('clan_id', $selectedClanId)
+            ->orderBy('date')
             ->first();
 
-        $this->lastClanGame = ClanGame::where('clan_id', $selectedClanId)
-            ->orderByDesc('clanGameNumber')
-            ->first();
+        $playerWithMostClanGames = $firstClanGame->player;
 
-        return view('livewire.clan-game', compact('players'))
+        $latestClanGames = ClanGame::where([
+            ['clanGameNumber', $playerWithMostClanGames->clanGames()->orderByDesc('date')->first()->clanGameNumber],
+            ['clan_id', $selectedClanId]
+        ])->get();
+
+        $this->totalPointsLastClanGame = 0;
+        foreach ($latestClanGames as $clanGame) {
+            $this->totalPointsLastClanGame += $this->getClanGamePerformance($clanGame->player, $clanGame->clanGameNumber);
+        }
+
+        return view('livewire.clan-game', compact('players', 'playerWithMostClanGames'))
             ->layout('layouts.pava-tracker');
     }
 }
