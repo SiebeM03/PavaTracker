@@ -1,4 +1,4 @@
-@if($visibleOnOverview)
+@if(!$showingOverview)
     <x-pt.section>Filter</x-pt.section>
 @endif
 

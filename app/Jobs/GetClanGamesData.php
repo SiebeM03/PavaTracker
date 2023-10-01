@@ -42,32 +42,78 @@ class GetClanGamesData implements ShouldQueue
         $interval = $currentDate->diff($clanGamesLaunchDate);
         $amountOfClanGames = ($interval->y * 12) + $interval->m - ($currentDate->format('d') < 28 ? 1 : 0);
 
-        $clanGameEndDate = new DateTime($currentDate->format('y') . '-' . $currentDate->format('m') - ($currentDate->format('d') < 28 ? 1 : 0) . '-28');
+        $clanGameEndDate = new DateTime($currentDate->format('Y') . '-' . $currentDate->format('m') - ($currentDate->format('d') < 28 ? 1 : 0) . '-28');
+
+        $clanGameEndDate->modify('-2 months');
+        foreach (Clan::get() as $clan) {
+            foreach ($clan->players as $player) {
+                $foundEntry = ClanGame::where([
+                    ['player_id', '=', $player->id],
+                    ['clanGameNumber', '=', $amountOfClanGames - 2]
+                ])->first();
 
 
-        for ($n = 10; $n >= 0; $n--) {
-            foreach (Clan::get() as $clan) {
-                foreach ($clan->players as $player) {
-                    $foundEntry = ClanGame::where([
-                        ['player_id', '=', $player->id],
-                        ['clanGameNumber', '=', $amountOfClanGames - $n]
-                    ])->first();
-
-                    // Avoid duplicate entries for 1 player on 1 clan game
-                    if ($foundEntry == null && in_array($player->id, range(0, 10))) {
-                        $clanGame = ClanGame::create([
-                            'player_id' => $player->id,
-                            'clan_id' => $player->clan_id,
-                            'totalPoints' => PlayerAPI::getClanGamePoints($player->tag) - random_int(100, 5000)*$n,
-                            'clanGameNumber' => $amountOfClanGames - $n,
-                            'date' => $clanGameEndDate->modify('-'.$n.' month'),
-                        ]);
-                        dump("(" . $player->id . ") " . $player->name . " entry created for ClanGame: " . $amountOfClanGames - $n);
-                    }
+                // Avoid duplicate entries for 1 player on 1 clan game
+                if ($foundEntry == null && in_array($player->id, range(0, 10))) {
+                    $clanGame = ClanGame::create([
+                        'player_id' => $player->id,
+                        'clan_id' => $player->clan_id,
+                        'totalPoints' => PlayerAPI::getClanGamePoints($player->tag) - 2234,
+                        'clanGameNumber' => $amountOfClanGames - 2,
+                        'date' => $clanGameEndDate,
+                    ]);
+                    dump($clanGame->date);
+                    dump($clanGame->clanGameNumber);
                 }
             }
         }
 
+        $clanGameEndDate->modify('+1 months');
+        foreach (Clan::get() as $clan) {
+            foreach ($clan->players as $player) {
+                $foundEntry = ClanGame::where([
+                    ['player_id', '=', $player->id],
+                    ['clanGameNumber', '=', $amountOfClanGames - 1]
+                ])->first();
 
+
+                // Avoid duplicate entries for 1 player on 1 clan game
+                if ($foundEntry == null && in_array($player->id, range(0, 10))) {
+                    $clanGame = ClanGame::create([
+                        'player_id' => $player->id,
+                        'clan_id' => $player->clan_id,
+                        'totalPoints' => PlayerAPI::getClanGamePoints($player->tag) - 1234,
+                        'clanGameNumber' => $amountOfClanGames - 1,
+                        'date' => $clanGameEndDate,
+                    ]);
+                    dump($clanGame->date);
+                    dump($clanGame->clanGameNumber);
+                }
+            }
+        }
+
+        $clanGameEndDate->modify('+2 months');
+        foreach (Clan::get() as $clan) {
+            foreach ($clan->players as $player) {
+                $foundEntry = ClanGame::where([
+                    ['player_id', '=', $player->id],
+                    ['clanGameNumber', '=', $amountOfClanGames]
+                ])->first();
+
+
+                // Avoid duplicate entries for 1 player on 1 clan game
+                if ($foundEntry == null && in_array($player->id, range(0, 10))) {
+                    $clanGame = ClanGame::create([
+                        'player_id' => $player->id,
+                        'clan_id' => $player->clan_id,
+                        'totalPoints' => PlayerAPI::getClanGamePoints($player->tag),
+                        'clanGameNumber' => $amountOfClanGames,
+                        'date' => $clanGameEndDate,
+                    ]);
+                    dump($clanGame->date);
+                    dump($clanGame->clanGameNumber);
+                }
+            }
+        }
     }
 }

@@ -10,10 +10,7 @@ use Livewire\Component;
 
 class Members extends Component
 {
-    /* Set to false by default (when on /clan page)
-       Set to true when used as @livewire('clans', ['hideElement' => true])
-       See mount() and views/livewire/overview.blade.php for more info */
-    public $visibleOnOverview;
+    public $showingOverview;
     public $clan;
     public $error = [
         'reason' => null,
@@ -50,10 +47,10 @@ class Members extends Component
         }
     }
 
-    public function mount($visibleOnOverview = true)
+    public function mount($showingOverview = false)
     {
-        $this->visibleOnOverview = $visibleOnOverview;
-        if ($this->visibleOnOverview) {
+        $this->showingOverview = $showingOverview;
+        if ($this->showingOverview) {
             $this->updateMembersData();
         }
     }
