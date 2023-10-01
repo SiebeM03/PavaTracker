@@ -42,7 +42,7 @@
                 <x-slot name="title">Clan Capital Raids</x-slot>
             </x-pt.section>
             <!-- CG card -->
-            @livewire('clan-game')
+{{--@livewire('clan-game')--}}
         </div>
     </div>
     <!-- CW card -->

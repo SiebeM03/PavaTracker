@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Clan extends Model
 {
@@ -22,14 +23,19 @@ class Clan extends Model
      * hasMany('model', 'foreign_key', 'primary_key'):  method name is lowercase and plural case
      * belongsTo('model', 'foreign_key', 'primary_key')->withDefaults():  method name is lowercase and singular case
      */
-    public function players()
+    public function players(): HasMany
     {
         return $this->hasMany(Player::class);
     }
 
-    public function selectedPlayerClanServices()
+    public function selectedPlayerClanServices(): HasMany
     {
         return $this->hasMany(SelectedPlayerClanService::class);
+    }
+
+    public function clanGames(): HasMany
+    {
+        return $this->hasMany(ClanGame::class);
     }
 
     /**
