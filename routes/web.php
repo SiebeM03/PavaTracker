@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Livewire\ClanGame;
+use App\Http\Livewire\ClanGames;
 use App\Http\Livewire\Members;
 use App\Http\Livewire\Overview;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', Overview::class)->name('overview');
 Route::get('/clan', Members::class)->name('members');
-Route::get('/clan_game', ClanGame::class)->name('clan-game');
+Route::get('/clan_game', ClanGames::class)->name('clan-game');
 Route::view('/2', 'two')->name('two');
 
 Route::middleware([

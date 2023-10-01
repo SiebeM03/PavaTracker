@@ -15,7 +15,14 @@ return new class extends Migration
     {
         Schema::create('clan_games', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('player_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
+            $table->foreignId('clan_id')->nullable()->constrained()->nullOnDelete()->cascadeOnUpdate();
+            $table->integer('totalPoints');
+            $table->integer('clanGameNumber');
+            $table->dateTime('date');
             $table->timestamps();
+
+            $table->unique(['player_id', 'clanGameNumber']);
         });
     }
 

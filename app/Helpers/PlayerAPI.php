@@ -8,6 +8,22 @@ use App\Models\Player;
 
 class PlayerAPI extends API
 {
+    /**<p>Returns a Clan object with given <i>$clanTag</i></p>
+     * @param string $playerTag
+     * @return Player
+     * @throws ApiException
+     */
+    public static function getPlayerByTag(string $playerTag): Player
+    {
+        $foundPlayer = Player::where('tag', $playerTag)->first();
+        if (!isset($playerTag)) {
+            try {
+                $foundPlayer = self::savePlayerInfo($playerTag);
+            } catch (ApiException $e) {
+            }
+        }
+        return $foundPlayer;
+    }
 
     /**
      * @param Player $player <p>Player object for which the clan is requested</p>
@@ -81,10 +97,12 @@ class PlayerAPI extends API
      * @return Player
      * @throws ApiException
      */
-    public static function savePlayerInfo(string $playerTag): Player
+    public static function savePlayerInfo(string $playerTag, $data = null): Player
     {
-        $url = 'https://api.clashofclans.com/v1/players/' . urlencode($playerTag);
-        $data = self::apiCall($url);
+        if ($data == null) {
+            $url = 'https://api.clashofclans.com/v1/players/' . urlencode($playerTag);
+            $data = self::apiCall($url);
+        }
         return Player::updateOrCreate(
             [
                 'tag' => $data["tag"],
@@ -118,16 +136,30 @@ class PlayerAPI extends API
     }
 
     /**
-     * @param $tag
+     * @param $playerTag
      * @param $userId
      * @return Player
      * @throws ApiException
      */
-    public static function updateUserId($tag, $userId): Player
+    public static function updateUserId($playerTag, $userId): Player
     {
-        $player = self::savePlayerInfo($tag);
+        $player = self::savePlayerInfo($playerTag);
         $player->update(['user_id' => $userId]);
         return $player;
     }
 
+
+    public static function getClanGamePoints(string $playerTag)
+    {
+        $url = 'https://api.clashofclans.com/v1/players/' . urlencode($playerTag);
+        $data = self::apiCall($url);
+        $player = self::savePlayerInfo($playerTag, $data);
+        $achievements = collect($data['achievements']);
+
+        $clanGamesAchievement = $achievements->first(function ($achievement) {
+            return $achievement['name'] === 'Games Champion';
+        });
+
+        return $clanGamesAchievement['value'];
+    }
 }
